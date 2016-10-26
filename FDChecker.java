@@ -44,12 +44,28 @@ public class FDChecker {
 		//original table.
 		//a decomposition is lossless if the common attributes for a superkey for one of the
 		//tables.
-		return false;
+		
+		// get t1 intersect t2
+		AttributeSet intersect = new AttributeSet(t1);
+		intersect.retainAll(t2);
+		AttributeSet closure = closure(intersect, fds);
+		return closure.containsAll(t1) || closure.containsAll(t2);
 	}
 
 	//recommended helper method
 	//finds the total set of attributes implied by attrs
 	private static AttributeSet closure(AttributeSet attrs, Set<FunctionalDependency> fds) {
-		return null;
+		AttributeSet closure = new AttributeSet(attrs);
+		boolean changed = true;
+		while (changed) {
+			changed = false;
+			for (FunctionalDependency fd: fds) {
+				if (closure.containsAll(fd.left) && closure.add(fd.right)) {
+					changed = true;
+					
+				}
+			}
+		}
+		return closure;
 	}
 }
