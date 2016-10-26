@@ -25,7 +25,34 @@ public class FDChecker {
 		//		t = closure(t) intersect table
 		//		result = result union t
 		//if b is contained in result, the dependency is preserved
-		return false;
+		for (FunctionalDependency fd: fds) {
+			AttributeSet result = new AttributeSet(fd.left);
+			boolean changed = true;
+			while (changed) {
+				changed = false;
+				// for t1
+				AttributeSet t = new AttributeSet(result);
+				t.retainAll(t1);
+				t = closure(t, fds);
+				t.retainAll(t1);
+				if (result.addAll(t)) {
+					changed = true;
+				}
+				
+				// for t2
+				t = new AttributeSet(result);
+				t.retainAll(t2);
+				t = closure(t, fds);
+				t.retainAll(t2);
+				if (result.addAll(t)) {
+					changed = true;
+				}
+			}
+			if (!result.contains(fd.right)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
